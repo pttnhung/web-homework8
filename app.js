@@ -1,17 +1,23 @@
+require('dotenv').config();
 const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const squareRoutes = require('./routes/squareRoutes');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.log(err));
 
 app.set('view engine', 'ejs');
+app.set('views', './views');
 
-const productRouter = require('./routes/product');
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/products', productRouter);
+app.use('/', squareRoutes);
 
-app.get('/', (req, res) => {
-  res.send('Welcome to my Express JS app!');
-});
-
-app.listen(3000, () => {
-  console.log('Server is running at http://localhost:3000');
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
